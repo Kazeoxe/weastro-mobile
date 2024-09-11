@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart'; // Importez ce package pour afficher les SVG dans Flutter
 import 'package:intl/intl.dart';
 import 'package:waestro_mobile/models/weather_model.dart'; // Assurez-vous que vous avez bien ce modèle
 import 'package:waestro_mobile/styles/app_styles.dart'; // Import de AppStyle
@@ -18,44 +19,48 @@ class WeatherResultPage extends StatelessWidget {
       ),
       body: Column(
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: [
-                // Colonne pour la ville, la date et la température ressentie
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Titre principal - Ville
-                    Text(
-                      weather.cityName,
-                      style: AppStyle.cityNameStyle, // Style pour le nom de la ville
-                    ),
-                    SizedBox(height: 10),
+          // Utilisation d'un Container avec une hauteur de 45% de la hauteur totale de l'écran
+          Container(
+            height: MediaQuery.of(context).size.height * 0.40,
+            child: Padding(
+              padding: const EdgeInsets.all(42.0),
+              child: Row(
+                children: [
+                  // Colonne pour la ville, la date et la température ressentie
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Titre principal - Ville
+                      Text(
+                        weather.cityName,
+                        style: AppStyle.cityNameStyle, // Style pour le nom de la ville
+                      ),
+                      SizedBox(height: 10),
 
-                    // Date d'aujourd'hui
-                    Text(
-                      DateFormat('dd MMMM, EEEE').format(DateTime.now()), // Date formatée
-                      style: AppStyle.dateStyle, // Style pour la date
-                    ),
-                    SizedBox(height: 10),
+                      // Date d'aujourd'hui
+                      Text(
+                        DateFormat('dd MMMM, EEEE').format(DateTime.now()), // Date formatée
+                        style: AppStyle.dateStyle, // Style pour la date
+                      ),
+                      SizedBox(height: 10),
 
-                    // Température ressentie
-                    Text(
-                      'Real feel ${weather.feelslike}°',
-                      style: AppStyle.realFeelStyle, // Style pour le ressenti
-                    ),
-                  ],
-                ),
+                      // Température ressentie
+                      Text(
+                        'Real feel ${weather.feelslike}°',
+                        style: AppStyle.realFeelStyle, // Style pour le ressenti
+                      ),
+                    ],
+                  ),
 
-                Spacer(), // Espace flexible pour pousser la température à droite
+                  Spacer(), // Espace flexible pour pousser la température à droite
 
-                // Température principale à droite
-                Text(
-                  '${weather.temp}°',
-                  style: AppStyle.tempStyle, // Style pour la température
-                ),
-              ],
+                  // Température principale à droite
+                  Text(
+                    '${weather.temp}°',
+                    style: AppStyle.tempStyle, // Style pour la température
+                  ),
+                ],
+              ),
             ),
           ),
 
@@ -74,7 +79,7 @@ class WeatherResultPage extends StatelessWidget {
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.only(left: 42.0, top: 15.0, right: 42.0),
                 child: ListView.builder(
                   itemCount: weather.days.length,
                   itemBuilder: (context, index) {
@@ -87,9 +92,22 @@ class WeatherResultPage extends StatelessWidget {
                             '${DateFormat('dd MMMM').format(day.date)}', // Formatage de la date
                             style: AppStyle.dayTitleStyle, // Style pour le titre du jour
                           ),
-                          subtitle: Text(
-                            'Max: ${day.maxTemp}°C - Min: ${day.minTemp}°C',
-                            style: AppStyle.daySubtitleStyle, // Style pour le sous-titre
+                          subtitle: Row(
+                            children: [
+                              // Température max et min
+                              Text(
+                                'Max: ${day.maxTemp}°C - Min: ${day.minTemp}°C',
+                                style: AppStyle.daySubtitleStyle, // Style pour le sous-titre
+                              ),
+                              SizedBox(width: 8), // Espacement entre la température et la phase lunaire
+                              
+                              // Phase lunaire
+                              SvgPicture.asset(
+                                day.getMoonPhaseImagePath(),
+                                width: 24, // Largeur de l'image de la phase lunaire
+                                height: 24, // Hauteur de l'image de la phase lunaire
+                              ),
+                            ],
                           ),
                           trailing: Text(
                             day.condition, // Condition météo
